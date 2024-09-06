@@ -1,102 +1,100 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { ImageBackground, ScrollView, Text, View, Image } from "react-native";
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function TabTwoScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-          to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
-  );
+export default function Index() {
+	const background = require("../../assets/images/home.png");
+	const logo = require("../../assets/icons/logo.png");
+	const sheep = require("../../assets/images/image1.png");
+	const white = require("../../assets/images/farmer2.png");
+	const black = require("../../assets/images/farmer1.png");
+	const farm = require("../../assets/images/image.png");
+
+	return (
+		<SafeAreaView>
+			<ScrollView>
+				<View style={{ backgroundColor: "#1D7707", height: 900 }}>
+					<ImageBackground
+						source={background}
+						style={{ width: 420, height: 300 }}>
+						<View
+							style={{
+								backgroundColor: "white",
+								marginTop: 265,
+								marginLeft: 15,
+								bottom: -15,
+								width: 156,
+								height: 43,
+								borderRadius: 10,
+								alignContent: "center",
+								alignItems: "center",
+							}}>
+							<Text
+								style={{
+									fontSize: 13,
+									fontWeight: 600,
+									textAlign: "center",
+									margin: "auto",
+								}}>
+								Explore Communities
+							</Text>
+						</View>
+					</ImageBackground>
+
+					<View
+						style={{
+							backgroundColor: "white",
+							marginTop: 35,
+							marginLeft: 15,
+							bottom: -15,
+							width: 166,
+							height: 246,
+							borderRadius: 15,
+							alignContent: "center",
+							alignItems: "center",
+						}}>
+						<Image
+							source={sheep}
+							style={{
+								alignContent: "center",
+								alignItems: "center",
+								marginTop: 10,
+							}}
+						/>
+						<Text
+							style={{
+								fontSize: 13,
+								fontWeight: 600,
+								marginLeft: -45,
+								marginTop: 10,
+							}}>
+							Thabiso Thar
+						</Text>
+						<Text
+							style={{
+								fontSize: 13,
+								fontWeight: 200,
+								marginLeft: -65,
+								marginTop: 1,
+							}}>
+							Farmer
+						</Text>
+						<Text
+							style={{
+								backgroundColor: "green",
+								padding: 3,
+								borderRadius: 10,
+								borderColor: "black",
+								color: "white",
+								textAlign: "center",
+							}}>
+							{" "}
+							Connect
+						</Text>
+					</View>
+				</View>
+			</ScrollView>
+		</SafeAreaView>
+	);
 }
-
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});
