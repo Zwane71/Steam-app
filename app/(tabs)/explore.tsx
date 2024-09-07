@@ -1,3 +1,4 @@
+import Background from "@/components/CommunityBackgroun";
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground, ScrollView, Text, View, Image } from "react-native";
 
@@ -41,57 +42,13 @@ export default function Index() {
 							</Text>
 						</View>
 					</ImageBackground>
-
-					<View
-						style={{
-							backgroundColor: "white",
-							marginTop: 35,
-							marginLeft: 15,
-							bottom: -15,
-							width: 166,
-							height: 246,
-							borderRadius: 15,
-							alignContent: "center",
-							alignItems: "center",
-						}}>
-						<Image
-							source={sheep}
-							style={{
-								alignContent: "center",
-								alignItems: "center",
-								marginTop: 10,
-							}}
-						/>
-						<Text
-							style={{
-								fontSize: 13,
-								fontWeight: 600,
-								marginLeft: -45,
-								marginTop: 10,
-							}}>
-							Thabiso Thar
-						</Text>
-						<Text
-							style={{
-								fontSize: 13,
-								fontWeight: 200,
-								marginLeft: -65,
-								marginTop: 1,
-							}}>
-							Farmer
-						</Text>
-						<Text
-							style={{
-								backgroundColor: "green",
-								padding: 3,
-								borderRadius: 10,
-								borderColor: "black",
-								color: "white",
-								textAlign: "center",
-							}}>
-							{" "}
-							Connect
-						</Text>
+					<View style={{ display: "flex", flexDirection: "row" }}>
+						<Background icon={sheep} title='Thabiso Thar' position='Farmer' />
+						<Background icon={white} title='Tankiso Mat' position='Investor' />
+					</View>
+					<View style={{ display: "flex", flexDirection: "row" }}>
+						<Background icon={black} title='Thato nk' position='Farmer' />
+						<Background icon={farm} title='thu uom' position='Investor' />
 					</View>
 				</View>
 			</ScrollView>
