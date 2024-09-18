@@ -1,7 +1,4 @@
-import CustomButton from "@/components/CustomButton";
-import FormField from "@/components/FormField";
-import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
 	ImageBackground,
 	ScrollView,
@@ -10,12 +7,14 @@ import {
 	Image,
 	StyleSheet,
 	TouchableOpacity,
+	TextInput,
 } from "react-native";
-import { Redirect, router } from "expo-router";
-
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Index() {
+// Main sign-in component
+export default function SignInPage() {
 	const logo = require("../../assets/icons/logo.png");
 	const background = require("../../assets/images/truck.jpeg");
 
@@ -24,6 +23,38 @@ export default function Index() {
 		password: "",
 	});
 
+	const [loading, setLoading] = useState(false);
+
+	// Handle the Sign In request to backend
+	const handleSignIn = async () => {
+		setLoading(true);
+		try {
+			const response = await fetch("http://192.168.1.28:5000/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					email: form.email,
+					password: form.password,
+				}),
+			});
+
+			const data = await response.json();
+			if (response.ok) {
+				// Store token locally and navigate to home
+				await AsyncStorage.setItem("token", data.token);
+				router.push("/home");
+			} else {
+				alert(data.message);
+			}
+		} catch (error) {
+			console.error(error);
+			alert("An error occurred during sign in");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	// Form styles
 	const formStyles = StyleSheet.create({
 		formfield: {
 			marginTop: 7,
@@ -31,11 +62,11 @@ export default function Index() {
 	});
 
 	return (
-		<View style={{ backgroundColor: "#1D7707", height: 800 }}>
+		<SafeAreaView style={{ backgroundColor: "#1D7707", height: "100%" }}>
 			<ScrollView>
 				<ImageBackground
 					source={background}
-					style={{ width: 420, height: 300 }}>
+					style={{ width: "100%", height: 300 }}>
 					<Image
 						source={logo}
 						style={{
@@ -50,83 +81,148 @@ export default function Index() {
 						style={{
 							marginTop: 15,
 							color: "white",
-							alignContent: "center",
-							alignItems: "center",
 							textAlign: "center",
-
 							backgroundColor: "#1D7707",
 							width: "100%",
 							padding: 25,
-							fontWeight: 600,
+							fontWeight: "600",
 							fontSize: 32,
 						}}>
 						Welcome Back
 					</Text>
 				</ImageBackground>
 
+				{/* Email Input */}
 				<FormField
-					title='Email'
+					title="Email"
 					value={form.email}
 					handleChangeText={(e) => setForm({ ...form, email: e })}
 					otherStyles={formStyles.formfield}
-					keyboardType='email-address'
-					style={{ marginTop: 25 }}
+					keyboardType="email-address"
 				/>
+
+				{/* Password Input */}
 				<FormField
-					title='password'
+					title="Password"
 					value={form.password}
 					handleChangeText={(e) => setForm({ ...form, password: e })}
 					otherStyles={formStyles.formfield}
+					secureTextEntry
 				/>
 
-				{/* <Text
-					style={{
-						marginLeft: 35,
-						marginTop: 15,
-						color: "white",
-						fontSize: 16,
-						fontWeight: 500,
-					}}>
-					Remember Me
-				</Text> */}
+				{/* Forgot password */}
 				<Text
 					style={{
 						marginTop: 15,
 						color: "white",
 						fontSize: 16,
-						fontWeight: 500,
+						fontWeight: "500",
 						right: -250,
 					}}>
-					Forgot Password ?
+					Forgot Password?
 				</Text>
 
+				{/* Sign In button */}
 				<CustomButton
-					title='Sign In'
-					handlePress={() => router.push("/home")}
+					title={loading ? "Signing In..." : "Sign In"}
+					handlePress={handleSignIn}
+					disabled={loading}
 				/>
+
+				{/* Sign Up redirect */}
 				<Text
 					style={{
 						marginTop: 15,
 						color: "white",
 						fontSize: 15,
-						fontWeight: 500,
-						margin: "auto",
+						fontWeight: "500",
+						textAlign: "center",
 					}}>
-					Don’t have an account ?{" "}
+					Don’t have an account?{" "}
 					<TouchableOpacity onPress={() => router.push("/sign-up")}>
 						<Text
 							style={{
 								marginLeft: 10,
 								color: "blue",
 								fontSize: 15,
-								fontWeight: 500,
+								fontWeight: "500",
 							}}>
 							Sign Up
 						</Text>
 					</TouchableOpacity>
 				</Text>
-				<StatusBar style='auto' />
 			</ScrollView>
+		</SafeAreaView>
+	);
+}
+
+// Custom Button Component
+function CustomButton({ title, handlePress, disabled }) {
+	return (
+		<TouchableOpacity
+			style={[styles.button, disabled && styles.disabledButton]}
+			onPress={handlePress}
+			disabled={disabled}>
+			<Text style={styles.text}>{title}</Text>
+		</TouchableOpacity>
+	);
+}
+
+// Custom Form Field Component
+function FormField({
+	title,
+	value,
+	handleChangeText,
+	otherStyles,
+	keyboardType = "default",
+	secureTextEntry = false,
+}) {
+	return (
+		<View style={[styles.container, otherStyles]}>
+			<Text style={styles.label}>{title}</Text>
+			<TextInput
+				style={styles.input}
+				value={value}
+				onChangeText={handleChangeText}
+				keyboardType={keyboardType}
+				secureTextEntry={secureTextEntry}
+				placeholder={title}
+			/>
 		</View>
 	);
 }
+
+// Styles for CustomButton and FormField
+const styles = StyleSheet.create({
+	button: {
+		backgroundColor: "#1D7707",
+		paddingVertical: 15,
+		paddingHorizontal: 30,
+		marginVertical: 20,
+		marginHorizontal: 20,
+		borderRadius: 8,
+		alignItems: "center",
+	},
+	text: {
+		color: "#fff",
+		fontSize: 18,
+		fontWeight: "bold",
+	},
+	disabledButton: {
+		backgroundColor: "#aaa",
+	},
+	container: {
+		marginHorizontal: 20,
+		marginVertical: 10,
+	},
+	label: {
+		color: "#fff",
+		fontSize: 16,
+		marginBottom: 5,
+	},
+	input: {
+		backgroundColor: "#fff",
+		padding: 10,
+		borderRadius: 8,
+	},
+});
