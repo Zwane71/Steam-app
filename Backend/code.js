@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 const os = require("os");
-const crypto = require("crypto");
 
 const app = express();
 app.use(express.json());
@@ -34,10 +33,6 @@ app.post("/signup", async (req, res) => {
   // Hardcoded SMTP credentials
   const smtpEmail = "phethiso2.0@outlook.com"; // Replace with your Outlook email
   const smtpPassword = "phethi0616"; // Replace with your Outlook password
-
-  // Log to check if SMTP email and password are retrieved correctly
-  console.log("SMTP Email:", smtpEmail);
-  console.log("SMTP Password:", smtpPassword);
 
   try {
     let user = await User.findOne({ email });
@@ -73,8 +68,8 @@ async function sendConfirmationEmail(email, confirmationCode, smtpEmail, smtpPas
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-      user: smtpEmail,     // User's Outlook email
-      pass: smtpPassword,  // User's Outlook password
+      user: smtpEmail,
+      pass: smtpPassword,
     },
   });
 
@@ -93,19 +88,59 @@ async function sendConfirmationEmail(email, confirmationCode, smtpEmail, smtpPas
   }
 }
 
-// Utility to get the local IP address
-const getLocalIP = () => {
-  const networkInterfaces = os.networkInterfaces();
-  for (const interfaceKey in networkInterfaces) {
-    const iface = networkInterfaces[interfaceKey].find(
-      (details) => details.family === "IPv4" && !details.internal
-    );
-    if (iface) return iface.address;
-  }
-  return "localhost";
-};
+// Verify Code Route
+app.post("/verify-code", async (req, res) => {
+  const { email, code } = req.body;
 
-// Server setup
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    if (user.confirmationCode === code) {
+      user.isVerified = true;
+      await user.save();
+      return res.status(200).json({ message: "Code verified successfully." });
+    } else {
+      return res.status(400).json({ message: "Invalid confirmation code." });
+    }
+  } catch (error) {
+    console.error("Error verifying code:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+});
+
+// Resend Code Route
+app.post("/resend-code", async (req, res) => {
+  const { email } = req.body;
+
+  // Hardcoded SMTP credentials
+  const smtpEmail = "phethiso2.0@outlook.com"; // Replace with your Outlook email
+  const smtpPassword = "phethi0616"; // Replace with your Outlook password
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Generate a new confirmation code
+    const newConfirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.confirmationCode = newConfirmationCode;
+    await user.save();
+
+    await sendConfirmationEmail(email, newConfirmationCode, smtpEmail, smtpPassword);
+
+    res.status(200).json({ message: "New confirmation code sent." });
+  } catch (error) {
+    console.error("Error resending code:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+});
+
+// Start the server
 const PORT = 4000;
-const localIP = getLocalIP();
-app.listen(PORT, () => console.log(`Server running on ${localIP}:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

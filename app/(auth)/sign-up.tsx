@@ -82,7 +82,7 @@ export default function SignUp() {
         setSignUpError(data.message);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error during sign up:", error);
       setSignUpError("An error occurred during sign up");
     } finally {
       setSubmitting(false);
@@ -99,30 +99,7 @@ export default function SignUp() {
       marginTop: 5,
     },
   });
-  const isEmailValid = (email) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  };
-  
-  
-  
-    // Validate email
-    if (!isEmailValid(form.email)) {
-      setSignUpError("Please enter a valid email address.");
-      return;
-    }
-  
-    // Validate password
-    if (!isPasswordValid(form.password)) {
-      setPasswordError(
-        "Password must be at least 8 characters long, include uppercase, lowercase, digits, and special characters."
-      );
-      return;
-    }
-  
-   
-  
-      
+
   return (
     <SafeAreaView style={{ backgroundColor: "#1D7707", height: "100%" }}>
       <ScrollView>
@@ -178,6 +155,7 @@ export default function SignUp() {
           otherStyles={formStyles.formfield}
           secureTextEntry
         />
+        
         {passwordError ? (
           <Text style={formStyles.errorText}>{passwordError}</Text>
         ) : null}
@@ -187,6 +165,7 @@ export default function SignUp() {
           handlePress={submit}
           disabled={isSubmitting}
         />
+        
         {signUpError ? (
           <Text style={formStyles.errorText}>{signUpError}</Text>
         ) : null}

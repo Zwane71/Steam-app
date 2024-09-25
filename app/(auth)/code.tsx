@@ -13,13 +13,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 
 export default function ConfirmationCodePage() {
-  const { email } = useLocalSearchParams(); // Correct method for fetching params
+  const { email } = useLocalSearchParams(); // Fetching email from URL params
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false); // State for resend code status
 
-  const truckImage = require("../../assets/images/truck.jpeg"); // Truck background image
+  const truckImage = require("../../assets/images/truck.jpeg"); // Background image
   const logo = require("../../assets/icons/logo.png"); // Logo image
 
   const handleVerifyCode = async () => {
@@ -33,7 +33,8 @@ export default function ConfirmationCodePage() {
         body: JSON.stringify({ email, code }),
       });
 
-      const data = await response.json();
+      const data = await response.json(); // Parse response directly as JSON
+
       if (response.ok) {
         // Code verified, navigate to another page (e.g., home or dashboard)
         router.push("/home");
@@ -41,7 +42,7 @@ export default function ConfirmationCodePage() {
         setError(data.message || "Invalid confirmation code.");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error verifying code:", error);
       setError("An error occurred during code verification.");
     } finally {
       setLoading(false);
@@ -59,14 +60,14 @@ export default function ConfirmationCodePage() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
+      const data = await response.json(); // Parse response directly as JSON
       if (response.ok) {
         alert("A new confirmation code has been sent to your email.");
       } else {
         setError(data.message || "Failed to resend the code.");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error resending code:", error);
       setError("An error occurred while resending the code.");
     } finally {
       setResending(false);
@@ -124,7 +125,7 @@ export default function ConfirmationCodePage() {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: "cover", // Resize image to cover the entire background
+    resizeMode: "cover",
   },
   container: {
     flexGrow: 1,
