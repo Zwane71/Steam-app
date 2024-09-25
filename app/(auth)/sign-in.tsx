@@ -24,12 +24,15 @@ export default function SignInPage() {
 	});
 
 	const [loading, setLoading] = useState(false);
+	const [signInError, setSignInError] = useState(""); // State for sign-in errors
 
 	// Handle the Sign In request to backend
 	const handleSignIn = async () => {
 		setLoading(true);
+		setSignInError(""); // Clear any previous errors
+
 		try {
-			const response = await fetch("http://192.168.1.28:5000/login", {
+			const response = await fetch("http://192.168.1.39:5000/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -39,16 +42,18 @@ export default function SignInPage() {
 			});
 
 			const data = await response.json();
+
 			if (response.ok) {
 				// Store token locally and navigate to home
 				await AsyncStorage.setItem("token", data.token);
 				router.push("/home");
 			} else {
-				alert(data.message);
+				// Show error if invalid credentials
+				setSignInError(data.message || "Invalid credentials");
 			}
 		} catch (error) {
 			console.error(error);
-			alert("An error occurred during sign in");
+			setSignInError("An error occurred during sign in");
 		} finally {
 			setLoading(false);
 		}
@@ -58,6 +63,11 @@ export default function SignInPage() {
 	const formStyles = StyleSheet.create({
 		formfield: {
 			marginTop: 7,
+		},
+		errorText: {
+			color: "red",
+			fontSize: 14,
+			marginTop: 5,
 		},
 	});
 
@@ -110,6 +120,18 @@ export default function SignInPage() {
 					secureTextEntry
 				/>
 
+				{/* Display sign-in error */}
+				{signInError ? (
+					<Text style={formStyles.errorText}>{signInError}</Text>
+				) : null}
+
+				{/* Sign In button */}
+				<CustomButton
+					title={loading ? "Signing In..." : "Sign In"}
+					handlePress={handleSignIn}
+					disabled={loading}
+				/>
+
 				{/* Forgot password */}
 				<Text
 					style={{
@@ -121,13 +143,6 @@ export default function SignInPage() {
 					}}>
 					Forgot Password?
 				</Text>
-
-				{/* Sign In button */}
-				<CustomButton
-					title={loading ? "Signing In..." : "Sign In"}
-					handlePress={handleSignIn}
-					disabled={loading}
-				/>
 
 				{/* Sign Up redirect */}
 				<Text
